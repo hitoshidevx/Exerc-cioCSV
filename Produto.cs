@@ -9,6 +9,8 @@ namespace Aula27_28_29_30
         public float Preco { get; set; }
 
         private const string PATH = "Database/Produto.csv";
+        private const string PATH2 = "Database";
+        DirectoryInfo folder = Directory.CreateDirectory(PATH2);
 
         public Produto()
         {
