@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System;
+using System.Linq;
+
 namespace Aula27_28_29_30
 {
     public class Produto
@@ -64,9 +66,43 @@ namespace Aula27_28_29_30
                 //Adicionei o produto na lista antes do return;
                 produtos.Add(p);
             }
+
+            produtos = produtos.OrderBy(z => z.Nome).ToList();
             //Retornei o produto;
             return produtos;
         }
+
+        public List<Produto> Filtrar(string _nome){
+
+            return Ler().FindAll(x => x.Nome == _nome);
+
+        }
+
+        public void Remover(string _termo)
+        {
+            //Criei yna lista de linhas dos produtos para fazer uma espécie de backup
+            List<string> linhas = new List<string>();
+
+            using(StreamReader file = new StreamReader(PATH))
+            {
+                string line;
+                while((line = file.ReadLine()) != null){
+
+                    linhas.Add(line);
+
+                }
+                linhas.RemoveAll(y => y.Contains(_termo));
+            }
+
+            //Criamos uma forma de reescrita
+            using(StreamWriter output = new StreamWriter(PATH)){
+
+                output.Write(String.Join(Environment.NewLine, linhas.ToArray()));
+
+            }
+
+        }
+
 
         /// <summary>
         /// Método para separar os dados e colocá-los em um array;

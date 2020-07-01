@@ -9,13 +9,14 @@ namespace Aula27_28_29_30
         {
             
             Produto prod = new Produto();
-            prod.Codigo = 2;
-            prod.Nome = "Deathadder V2";
-            prod.Preco = 319.90f;
+            prod.Codigo = 3;
+            prod.Nome = "Ps4";
+            prod.Preco = 1899.90f;
 
             prod.InserirProduto(prod);
+            prod.Remover("Ps4");
 
-            List<Produto> lista = new List<Produto>();
+            List<Produto> lista = prod.Filtrar("Razer");
             lista = prod.Ler();
 
             foreach(Produto item in lista)
