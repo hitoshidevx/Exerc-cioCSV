@@ -50,16 +50,15 @@ namespace Aula27_28_29_30
             List<Produto> produtos = new List<Produto>();
 
             // Li o arquivo e transformamos em um array de linhas
-            // [0] = codigo=1;nome=Gibson;preco=7500
-            // [1] = codigo=1;nome=Fender;preco=7500 
+            
             string[] linhas = File.ReadAllLines(PATH);
 
             foreach(string linha in linhas){
                 
                 // Separei os dados de cada linha com Split
-                // [0] = codigo=1
-                // [1] = nome=Gibson
-                // [2] = preco=7500
+                // [0] = codigo=2
+                // [1] = nome=Xbox one
+                // [2] = preco=1900
                 string[] dado = linha.Split(";");
 
                 // Criei instâncias de produtos para serem colocados na lista
