@@ -28,14 +28,10 @@ namespace Aula27_28_29_30
 
         public void InserirProduto(Produto prod)
         {
-            var linha = new string [] { prod.PrepararLinhaCSV(prod) };
+            string[] linha = new string[] { PrepararLinhaCSV(prod) };
             File.AppendAllLines(PATH, linha);
         }
 
-        public string PrepararLinhaCSV(Produto p)
-        {
-            return $"código={p.Codigo};nome={p.Nome};preço={p.Preco};";
-        }
 
         /// <summary>
         /// Leitura da lista de produtos.
@@ -52,7 +48,7 @@ namespace Aula27_28_29_30
             string[] linhas = File.ReadAllLines(PATH);
 
             //Varri o array em strings
-            foreach(var linha in linhas)
+            foreach(string linha in linhas)
             {
                 //Separei os dados entre os ";"
                 string[] dados = linha.Split(";");
@@ -72,15 +68,16 @@ namespace Aula27_28_29_30
             return produtos;
         }
 
+        
         public List<Produto> Filtrar(string _nome){
 
             return Ler().FindAll(x => x.Nome == _nome);
 
         }
 
-        public void Remover(string _termo)
+        public void Remover(string _term)
         {
-            //Criei yna lista de linhas dos produtos para fazer uma espécie de backup
+            //Criei uma lista de linhas dos produtos para fazer uma espécie de backup
             List<string> linhas = new List<string>();
 
             using(StreamReader file = new StreamReader(PATH))
@@ -91,13 +88,16 @@ namespace Aula27_28_29_30
                     linhas.Add(line);
 
                 }
-                linhas.RemoveAll(y => y.Contains(_termo));
+                linhas.RemoveAll(y => y.Contains(_term));
             }
 
-            //Criamos uma forma de reescrita
+            //Criei uma forma de reescrita
             using(StreamWriter output = new StreamWriter(PATH)){
 
-                output.Write(String.Join(Environment.NewLine, linhas.ToArray()));
+                foreach(string ln in linhas)
+                {
+                    output.Write(ln+"\n");
+                }
 
             }
 
@@ -117,6 +117,10 @@ namespace Aula27_28_29_30
             //Agora: código[0] | {p.Codigo}[1];
             return dados.Split("=")[1];
 
+        }
+        public string PrepararLinhaCSV(Produto p)
+        {
+            return $"código={p.Codigo};nome={p.Nome};preço={p.Preco};";
         }
 
     }

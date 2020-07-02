@@ -9,20 +9,21 @@ namespace Aula27_28_29_30
         {
             
             Produto prod = new Produto();
-            prod.Codigo = 3;
-            prod.Nome = "Ps4";
-            prod.Preco = 1899.90f;
+            prod.Codigo = 6;
+            prod.Nome = "Switch";
+            prod.Preco = 2900f;
+
+            prod.Remover("6");
 
             prod.InserirProduto(prod);
-            prod.Remover("Ps4");
 
-            List<Produto> lista = prod.Filtrar("Razer");
-            lista = prod.Ler();
+            List<Produto> lista = prod.Ler();
 
-            foreach(Produto item in lista)
+            foreach (Produto item in lista)
             {
-                Console.WriteLine($"{prod.Nome} - R${prod.Preco}");
+                Console.WriteLine($"R${item.Preco} - {item.Nome}");
             }
+
 
 
 
