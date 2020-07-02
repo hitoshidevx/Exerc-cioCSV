@@ -1,5 +1,6 @@
-código=3;nome=Xbox One;preço=1700;
-código=3;nome=Xbox One;preço=1700;
-código=4;nome=Ps4;preço=1900;
-código=4;nome=Ps4;preço=1900;
-código=6;nome=Switch;preço=2900;
+codigo=4;nome=Ps4;preco=1700
+codigo=4;nome=Ps4;preco=1700
+codigo=6;nome=Switch;preco=2900
+codigo=6;nome=Switch;preco=2900
+codigo=2;nome=Xbox one;preco=1900
+codigo=2;nome=Xbox one;preco=1900

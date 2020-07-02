@@ -1,126 +1,162 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System;
 using System.Linq;
 
 namespace Aula27_28_29_30
 {
     public class Produto
     {
-        
         public int Codigo { get; set; }
         public string Nome { get; set; }
         public float Preco { get; set; }
 
-        //Solução do desafio proposto.
-        private const string PATH2 = "Database";
-        DirectoryInfo folder = Directory.CreateDirectory(PATH2);
-        private const string PATH = "Database/Produto.csv";
+        private const string PATH = "Database/produto.csv";
 
         public Produto()
         {
+            // ------------------------------------------------
+            // Solução do desafio proposto pelo professor (método para criar pasta caso não exista)
+            string pasta = PATH.Split('/')[0];
 
-            if(!File.Exists(PATH)){
+            if(!Directory.Exists(pasta)){
+                Directory.CreateDirectory(pasta);
+            }
+            // ------------------------------------------------
+
+            if(!File.Exists(PATH))
+            {
                 File.Create(PATH).Close();
             }
-
         }
 
-        public void InserirProduto(Produto prod)
+        /// <summary>
+        /// Cadastra um produto
+        /// </summary>
+        /// <param name="prod">Objeto Produto</param>
+        public void Cadastrar(Produto prod)
         {
-            string[] linha = new string[] { PrepararLinhaCSV(prod) };
+            var linha = new string[] { PrepararLinha(prod) };
             File.AppendAllLines(PATH, linha);
         }
 
-
         /// <summary>
-        /// Leitura da lista de produtos.
+        /// Lê o csv 
         /// </summary>
-        /// <returns>
-        /// Retorna a lista de produtos feita.
-        /// </returns>
+        /// <returns>Lista de produtos</returns>
         public List<Produto> Ler()
         {
-            //Criei a lista;
+            // Criei uma lista que servirá como nosso retorno
             List<Produto> produtos = new List<Produto>();
 
-            //Transformei as linhas em um array de string;
+            // Li o arquivo e transformamos em um array de linhas
+            // [0] = codigo=1;nome=Gibson;preco=7500
+            // [1] = codigo=1;nome=Fender;preco=7500 
             string[] linhas = File.ReadAllLines(PATH);
 
-            //Varri o array em strings
-            foreach(string linha in linhas)
-            {
-                //Separei os dados entre os ";"
-                string[] dados = linha.Split(";");
+            foreach(string linha in linhas){
+                
+                // Separei os dados de cada linha com Split
+                // [0] = codigo=1
+                // [1] = nome=Gibson
+                // [2] = preco=7500
+                string[] dado = linha.Split(";");
 
-                //Tratei os dados separando declarando um novo tipo de "produto";
-                Produto p   = new Produto(); 
-                p.Codigo    = Int32.Parse( Separar(dados[0]) );
-                p.Nome      = Separar(dados[1]);
-                p.Preco     = float.Parse( Separar(dados[2]) );
+                // Criei instâncias de produtos para serem colocados na lista
+                Produto p   = new Produto();
+                p.Codigo    = Int32.Parse( Separar(dado[0]) );
+                p.Nome      = Separar(dado[1]);
+                p.Preco     = float.Parse( Separar(dado[2]) );
 
-                //Adicionei o produto na lista antes do return;
                 produtos.Add(p);
             }
 
-            produtos = produtos.OrderBy(z => z.Nome).ToList();
-            //Retornei o produto;
-            return produtos;
+            produtos = produtos.OrderBy(y => y.Nome).ToList();
+            return produtos; 
         }
-
-        
-        public List<Produto> Filtrar(string _nome){
-
-            return Ler().FindAll(x => x.Nome == _nome);
-
-        }
-
-        public void Remover(string _term)
-        {
-            //Criei uma lista de linhas dos produtos para fazer uma espécie de backup
-            List<string> linhas = new List<string>();
-
-            using(StreamReader file = new StreamReader(PATH))
-            {
-                string line;
-                while((line = file.ReadLine()) != null){
-
-                    linhas.Add(line);
-
-                }
-                linhas.RemoveAll(y => y.Contains(_term));
-            }
-
-            //Criei uma forma de reescrita
-            using(StreamWriter output = new StreamWriter(PATH)){
-
-                foreach(string ln in linhas)
-                {
-                    output.Write(ln+"\n");
-                }
-
-            }
-
-        }
-
 
         /// <summary>
-        /// Método para separar os dados e colocá-los em um array;
-        /// Método utilizado = Split (serve para separar);
+        /// Remove uma ou mais linhas que contenham o termo
         /// </summary>
-        /// <returns>
-        /// Retorna o dado que foi separado em array escolhido; que no caso seria o dado (p.Codigo/p.Nome/p.Preco) de fato;
-        /// </returns>
-        public string Separar(string dados){
-            //Separei os dados em dois
-            //Antes: código = {p.Codigo};
-            //Agora: código[0] | {p.Codigo}[1];
-            return dados.Split("=")[1];
+        /// <param name="_termo">termo para ser buscado</param>
+        public void Remover(string _termo){
 
+            // Criei uma lista que servirá como uma espécie de backup para as linhas do csv
+            List<string> linhas = new List<string>();
+
+            // Utilizei a bliblioteca StreamReader para ler o .csv
+            using(StreamReader arquivo = new StreamReader(PATH))
+            {
+                string linha;
+                while((linha = arquivo.ReadLine()) != null)
+                {
+                    linhas.Add(linha);
+                }
+            }
+
+            // Removi as linhas que tiverem o termo passado como argumento
+            linhas.RemoveAll(l => l.Contains(_termo));
+
+            // Reescrevi o csv do zero
+            ReescreverCSV(linhas);
         }
-        public string PrepararLinhaCSV(Produto p)
+        
+        /// <summary>
+        /// Altera um produto
+        /// </summary>
+        /// <param name="_produtoAlterado">Objeto de Produto</param>
+        public void Alterar(Produto _produtoAlterado){
+
+            // Criei uma lista que servirá como uma espécie de backup para as linhas do csv
+            List<string> linhas = new List<string>();
+
+            // Utilizei a biblioteca StreamReader para ler o .csv
+            using(StreamReader arquivo = new StreamReader(PATH))
+            {
+                string linha;
+                while((linha = arquivo.ReadLine()) != null)
+                {
+                    linhas.Add(linha);
+                }
+            }
+            // codigo=2;nome=Xbox one;preco=1900
+            // linhas.RemoveAll(y => y.Split(";")[0].Contains(_produtoAlterado.Codigo.ToString()));
+            
+            // codigo= 2; nome=Ibanez;preco=7500
+            linhas.RemoveAll(y => y.Split(";")[0].Split("=")[1] == _produtoAlterado.Codigo.ToString());
+
+            // Adicionei a linha alterada na lista de backup
+            linhas.Add( PrepararLinha(_produtoAlterado) );
+
+            // Reescrevi o csv do zero
+            ReescreverCSV(linhas);         
+        }
+
+
+        private void ReescreverCSV(List<string> lines){
+            // Reescrevi o csv do zero
+            using(StreamWriter output = new StreamWriter(PATH))
+            {
+                foreach(string ln in lines)
+                {
+                    output.Write(ln + "\n");
+                }
+            }   
+        }
+
+        public List<Produto> Filtrar(string _nome)
         {
-            return $"código={p.Codigo};nome={p.Nome};preço={p.Preco};";
+            return Ler().FindAll(x => x.Nome == _nome);
+        }
+
+        private string Separar(string _coluna)
+        {
+            return _coluna.Split("=")[1];
+        }
+
+        private string PrepararLinha(Produto p)
+        {
+            return $"codigo={p.Codigo};nome={p.Nome};preco={p.Preco}";
         }
 
     }
