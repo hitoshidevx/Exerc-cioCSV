@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Aula27_28_29_30
 {
-    public class Produto
+    public class Produto : IProduto
     {
         public int Codigo { get; set; }
         public string Nome { get; set; }
